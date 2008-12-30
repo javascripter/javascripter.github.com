@@ -30,10 +30,10 @@
     var enabled = 1;
     var m = location.search.match(/(?:^\?|&)url=([^&]*)/);
     if (m) source.src = decodeURIComponent(m[1]);
-    layer.addEventListener('click', function () {
+    layer.onclick =  function () {
       overlay.style.width = source.width * enabled + 'px';
       overlay.style.height = source.height * enabled + 'px';
       enabled ^= 1;
-    }, false);
+    };
   </script>
 </html>
