@@ -1,0 +1,38 @@
+<html>
+  <head>
+    <title>IE Ctrl+A</title>
+    <style type="text/css">
+      #layer { position: relative; }
+      #overlay { background-image:url("data:image/png,%89PNG%0D%0A%1A%0A%00%00%00%0DIHDR%00%00%00%02%00%00%00%02%08%06%00%00%00r%B6%0D%24%00%00%00%01sRGB%00%AE%CE%1C%E9%00%00%00%06bKGD%00%FF%00%FF%00%FF%A0%BD%A7%93%00%00%00%09pHYs%00%00%09%B0%00%00%09%B0%01%8E%23%D55%00%00%00%07tIME%07%D8%0C%1E%0A%176%80!m%96%00%00%00%22tEXtComment%00Created%20with%20GIMP%20on%20a%20Mac%87%A8wC%00%00%00%19IDAT%08%D7%05%C1%01%01%00%00%08%02%20%EC%A5%FF%87%18%84%0E9%04%7B%14m%02%5D%89%CD%60%BE%00%00%00%00IEND%AEB%60%82"); }
+      #overlay, #source {
+        position: absolute;
+        left: 0px;
+        top: 0px;
+      }
+    </style>
+  </head>
+  <body>
+    <form action="?" method="get">
+      <label>URL: <input type="text" name="url"></input></label>
+      <input type="submit" value="送信"></input>
+    </form>
+    <p>画像クリックでトグルします。</p>
+    <div id="layer">
+      <img id="source"></img>
+      <div id="overlay"><div>
+    </div>
+  </body>
+  <script type="text/javascript">
+    var layer = document.getElementById('layer');
+    var overlay = document.getElementById('overlay');
+    var source = document.getElementById('source');
+    var enabled = 1;
+    var m = location.search.match(/(?:^\?|&)url=([^&]*)/);
+    if (m) source.src = decodeURIComponent(m[1]);
+    layer.addEventListener('click', function () {
+      overlay.style.width = source.width * enabled + 'px';
+      overlay.style.height = source.height * enabled + 'px';
+      enabled ^= 1;
+    }, false);
+  </script>
+</html>
