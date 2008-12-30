@@ -9,6 +9,13 @@
         position: absolute;
         left: 0px;
         top: 0px;
+        z-index:1;
+      }
+      #overlay {
+        z-index: 2;
+        width: 500px;
+        height: 500px;
+        visibility: hidden;
       }
     </style>
   </head>
@@ -27,13 +34,16 @@
     var layer = document.getElementById('layer');
     var overlay = document.getElementById('overlay');
     var source = document.getElementById('source');
-    var enabled = 1;
+    var enabled = false;
     var m = location.search.match(/(?:^\?|&)url=([^&]*)/);
     if (m) source.src = unescape(m[1]);
+    source.onload = function () {
+      overlay.style.width = source.width + 'px';
+      overlay.style.height = source.height + 'px';
+    };
     layer.onclick =  function () {
-      overlay.style.width = source.width * enabled + 'px';
-      overlay.style.height = source.height * enabled + 'px';
-      enabled ^= 1;
+      overlay.style.visibility = enabled ? 'hidden' : 'visible';
+      enabled = !enabled;
     };
   </script>
 </html>
