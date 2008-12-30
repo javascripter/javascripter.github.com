@@ -4,18 +4,18 @@
     <meta http-equiv="content-type" content="text/html;charset=utf-8"></meta>
     <style type="text/css">
       #layer { position: relative; }
-      #overlay { background-image:url("images/overlay.png"); }
+      #overlay {
+        background-image:url("images/overlay.gif");
+        width: 500px;
+        height: 500px;
+        visibility: hidden;
+        z-index: 2;
+      }
       #overlay, #source {
         position: absolute;
         left: 0px;
         top: 0px;
         z-index:1;
-      }
-      #overlay {
-        z-index: 2;
-        width: 500px;
-        height: 500px;
-        visibility: hidden;
       }
     </style>
   </head>
