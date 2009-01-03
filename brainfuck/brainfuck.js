@@ -10,9 +10,11 @@ var brainfuck = function (source, getc) {
     switch (c) {
     case "+":
       ++heap[ptr];
+      if (heap[ptr] == 256) heap[ptr] = 0;
       break;
     case "-":
       --heap[ptr];
+      if (heap[ptr] == -1) heap[ptr] = 255;
       break;
     case ">":
       if (++ptr >= heap.length) heap.push(0);
