@@ -1,0 +1,123 @@
+<html>
+  <head>
+    <title>Local Skype</title>
+    <meta http-equiv="Content-Type" content="charset=utf-8"></meta>
+    <script type="text/javascript">
+window.onload = function () {
+var view = document.getElementsByTagName('dl').item(0);
+var i = 0;
+setInterval(
+  function () {
+    var dt, dd, user_name, abbr, now;
+    dt = document.createElement('dt');
+    user_name = document.createElement('span');
+    user_name.className = 'user-name';
+    user_name.appendChild(
+      document.createTextNode('俺')
+    );
+    abbr = document.createElement('abbr');
+    now = new Date();
+    abbr.appendChild(
+      document.createTextNode(
+        now.getHours() + ':' + now.getMinutes()
+      )
+    );
+    dd = document.createElement('dd');
+    dd.appendChild(
+      document.createTextNode(
+        i++
+      )
+    );
+    dt.appendChild(user_name);
+    dt.appendChild(abbr);
+    view.appendChild(dt);
+    view.appendChild(dd);
+    view.scrollTop += i % 80;
+  },
+  30);
+};
+    </script>
+    <style type="text/css">
+body {
+  margin: 0;
+  overflow-y: hidden;
+  font-family: sans-serif;
+  color: #3f3f3f;
+}
+
+h1 {
+  background-color: #bbc4d3;
+  font-size: 16px;
+  text-shadow: 1px 1px 1px #eeeeee;
+  margin: 0;
+  padding: 2px 10px;
+  border: 1px outset #dbdbdb;
+}
+
+dl {
+  font-size: 12px;
+  margin: 0;
+  padding: 0 10px;
+  height: 95%;
+  overflow-y: auto;
+}
+dt:first-child {
+  margin-top: 5px;
+}
+dt {
+  font-size: 12px;
+  padding: 1px 8px;
+  -webkit-border-radius: 8px;
+  -moz-border-radius: 8px;
+  background-color: #dbdbdb;
+}
+
+dt:nth-of-type(even) {
+  background-color: #b5d5ff;
+}
+
+dt > abbr {
+  font-size: 10px;
+  float: right;
+}
+
+dd {
+  margin: 2px 4px;
+}
+
+dd > a:link {
+  color: #0066ff;
+}
+
+dd > a:visited {
+  color: #cc0000;
+}
+
+dd > a:visited::before {
+  content: "✓";
+}
+    </style>
+  </head>
+  <body>
+    <h1>Local Skype</h1>
+    <dl>
+      <dt><span class="user-name">僕</span><abbr>2:20</abbr></dt>
+      <dd>うける。</dd>
+      <dt><span class="user-name">僕</span><abbr>2:21</abbr></dt>
+      <dd>はい。</dt>
+      <dt><span class="user-name">僕</span><abbr>2:20</abbr></dt>
+      <dd>うける。</dd>
+      <dt><span class="user-name">僕</span><abbr>2:21</abbr></dt>
+      <dd>はい。</dt>
+      <dt><span class="user-name">僕</span><abbr>2:21</abbr></dt>
+      <dd>はい。</dt>
+      <dt><span class="user-name">僕</span><abbr>2:21</abbr></dt>
+      <dd>はい。</dt>
+      <dt><span class="user-name">僕</span><abbr>2:21</abbr></dt>
+      <dd>はい。<a href="http://www.yourfilehost.com">http://yourfilehost.com/</a></dt>
+      <dt><span class="user-name">僕</span><abbr>2:21</abbr></dt>
+      <dd>はい。<a href="http://www.google.co.jp/">http://google.co.jp/</a></dt>
+    </dl>
+  </body>
+</html>
+
