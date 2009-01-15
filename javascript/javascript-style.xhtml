@@ -1,0 +1,143 @@
+<?xml version="1.0"?>
+<!DOCTYPE html
+   PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+   "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ja">
+  <head>
+    <title>JavaScript style</title>
+    <link rel="stylesheet" type="text/css" href="styles.css"></link>
+    <style type="text/css"><![CDATA[
+      body { margin: 1.2em; }
+      code { font-size: 0.8em; }
+    ]]></style>
+  </head>
+  <body>
+    <h1>JavaScript style</h1>
+    <h2>スタイル</h2>
+    <p>私がJavaScriptのコードを書く際に気をつけているルールを挙げた。<em></em></p>
+    <code><![CDATA[
+/*
+copyrightやlicense情報は最初に複数行コメントで書く
+*/
+// グローバル変数を初めにvarで宣言する
+var global = window;
+
+// 関数を使用する前に関数本体を書く
+function times(func, n, self) {
+  // var宣言は最初に書く。
+  var i;
+  if (!self) self = global; // 式が一つの場合、一行で書く
+  for (i = 0; i < n; ++i) { // 必要がない場合、i++ではなく++iとする
+    try {
+      func.call(self, i);
+    } catch (error) {
+      if (error instanceof global.StopIteration) {
+        break;
+      } else { // elseが必要な場合、ブレースは必ず付ける
+        throw error; // 目的の例外ではなかったらエラーを再送出する
+      }
+    }
+  }
+}
+ // 一行の関数はこのようにする
+Function.prototype.doTimes = function (n) { times(this, n); };
+
+times( // 引数が長くなる場合、下のようにインデントする
+  function (n) {
+    // typeofは関数ではないので括弧をつけない
+    if (typeof console === 'object' && typeof console.log === 'function') {
+      console.log('count:%s', n); // 文字列は1重引用符を使用する
+    } else {
+      alert(n);
+    }
+  },
+  10
+);
+
+document.body.appendChild(
+  document.createTextNode(
+    ['This is a long text.This is a long text.This is a long text.'
+    ,'This is a long text.This is a long text.This is a long text.'
+    ,'This is a long text.This is a long text.This is a long text.'
+    ].join('') // 文字列がとても長い場合、配列にしjoinで連結する
+  )
+);
+
+(function () { // グローバル空間の汚染を防ぐため無名関数を作りスコープを切る
+  var start = new Date().getTime();
+  var i; // 論理的な繋りが無い場合、var宣言は分けて書く
+  for (i = 0; i < 1000000; ++i) {
+    'aiueo'.indexOf('o') !== 0; // ==は使用しない。
+  }
+  alert(new Date().getTime() - start);
+})();
+
+(function () {
+  var is_visible = true; // ローカル変数は小文字を使用し、単語の区切りに_を使う
+  document.addEventListener(
+    'click',
+    function () {
+      document.body.style.visibility = (is_visible)? '': 'hidden';
+      // is_visible = 1 - is_visible;等のトリックを使わない
+      is_visible = !is_visible;
+    },
+    false
+  );
+})();
+
+(function () {
+  var cache = {};
+
+  RegExp.escape = function (source) {
+    // objectを辞書として使用する場合はhasOwnPropertyを使用する
+    if (cache.hasOwnProperty(source)) {
+      return cache[source];
+    } // if内でreturnする場合、elseは使用しない
+    return source.replace(/\W/g, '\\$&');
+  }; // メソッドの定義は一行空けて書く
+
+  RegExp.union = function () {
+    return Array.prototype.map.call(
+      arguments,
+      function (o) {
+        return (o instanceof RegExp)? o.source:
+          RegExp.escape(o);
+      }
+    ).join('|'); // メソッドチェインを賢く使用する
+  };
+})();
+
+// 組み込みの名前と被る場合、suffixとして_を付加する
+function NodeList_(list) {
+  var i;
+  var len;
+  for (i = 0; i < len; ++i) this[i] = list[i];
+  this.length = len;
+  // constructorにreturnを使用しない(ただしthis以外の物をreturnする場合を除く)
+}
+
+NodeList_.prototype.item = function (n) { // prototypeへ直接代入しない
+  if (typeof n !== 'number') n = Number(n);
+  return (n in this)? this[n]: null;
+};
+
+    ]]></code>
+  <p>上に書かなかったルールを列挙する。</p>
+  <ul>
+    <li>インデントはスペース2つ。</li>
+    <li><var>RegExp#test</var>で済む場合は、<var>String#match</var>は使用しない。<var>String#indexOf</var>と<var>RegExp#search</var>の場合も同様。</li>
+    <li><code>eval("alert('1');");</code>のように、JavaScript文字列を埋め込む際は、外側には2重引用符を使用する。</li>
+    <li>コードは80文字を目安に収める。長い正規表現やdata-uriの使用等、分割したほうが不自然な場合はこのルールは無視する。</li>
+    <li>無限ループは、<code>for(;;) statement;</code>を使用する。<code>while (true) statement;</code>は使用しない。</li>
+  </ul>
+  <h2>参考にすべき情報</h2>
+  <ul>
+    <li><a href="https://developer.mozilla.org/ja/JavaScript_style_guide">JavaScript style guide - MDC</a></li>
+    <li><a href="http://www.hyuki.com/yukiwiki/wiki.cgi?EfficientJavaScript">EfficientJavaScript  - Dev.Opera - 効率的な JavaScript</a></li>
+    <li>David Flanagan著『JavaScript 第5版』(オライリー・ジャパン発行)(少しコードスタイルが古臭い)</li>
+    <li>Douglas Crockford著『JavaScript: The Good Parts』(オライリー・ジャパン発行,2008)</li>
+    <li><a href="http://www.python.org/dev/peps/pep-0008/">PEP 8 -- Style Guide for Python Code</a>(Python用に書かれた文書だがJavaScriptコードを書く際にも有用)</li>
+  </ul>
+  <address>連絡先:<a href="http://d.hatena.ne.jp/javascripter">素人がプログラミングを勉強するブログ</a></address>
+  </body>
+</html>
