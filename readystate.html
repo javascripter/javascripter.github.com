@@ -1,0 +1,57 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<title>document.readyState</title>
+<style type="text/css">
+<!--
+#view {
+  white-space: pre-wrap;
+  -moz-column-rule: thin solid;
+  -webkit-column-rule: thin solid;
+  -moz-column-width: 12em;
+  -webkit-column-width: 12em;
+}
+    -->
+</style>
+<script type="text/javascript">
+<!--
+var ready_status = [];
+var loaded = false;
+(function push() {
+  ready_status.push(document.readyState);
+  if (!loaded) setTimeout(push, 0);
+})();
+window.addEventListener(
+  'DOMContentLoaded',
+  function () {
+    ready_status.push('[DOMContentLoaded]');
+  },
+  false
+);
+window.addEventListener(
+  'load',
+  function () {
+    ready_status.push('[load]');
+    setTimeout(
+      function () {
+        loaded = true;
+        document.getElementById('view').appendChild(
+          document.createTextNode(ready_status.join('\n'))
+        );
+      },
+      100
+    );
+  },
+  false
+);
+    -->
+</script>
+</head>
+<body>
+<pre id="view">
+</pre>
+<iframe src="http://ja.wikipedia.org/"></iframe>
+</body>
+</html>
+
