@@ -1,0 +1,98 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+  <head>
+    <title>JavaScript REPL</title>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8"></meta>
+    <style type="text/css">
+#in, #out { font-family: monospace; }
+#out {
+  max-height: 8em;
+  overflow: auto;
+  list-style: none;
+  padding: 0;
+}
+#out li { background: white; }
+#out li.normal { color: blue; }
+#out li.error { color: red; }
+  </style>
+  <script type="text/javascript">
+window.onload = function () {
+  var input = document.getElementById("in");
+  var output = document.getElementById("out");
+  var execute = document.getElementById("execute");
+  var clear = document.getElementById("clear");
+  function scrollToBottom() {
+    output.scrollTop = output.scrollHeight;
+  }
+  var normal = document.createElement('li');
+  normal.className = 'normal';
+  var error = document.createElement('li');
+  error.className = 'error';
+  var env = {
+    puts: function (str) {
+      var li = normal.cloneNode(true);
+      li.appendChild(document.createTextNode(str));
+      output.appendChild(li);
+      scrollToBottom();
+    },
+    error: function (str) {
+      var li = error.cloneNode(true);
+      li.appendChild(document.createTextNode(str));
+      output.appendChild(li);
+      scrollToBottom();
+     },
+    clear: function () {
+      while (output.firstChild) {
+        output.removeChild(output.firstChild);
+      }
+    },
+    evaluate: function (str) {
+      var value;
+      try {
+        with (env) {
+          value = eval(str);
+        }
+      } catch (error) {
+        env.error(error);
+        return;
+      }
+      if (typeof value !== "undefined") {
+        env.puts(value);
+      }
+    }
+  };
+  execute.onclick = function () {
+    env.evaluate(input.value);
+  };
+  clear.onclick = function () {
+    env.clear();
+  };
+};
+    </script>
+  </head>
+  <body>
+    <h1>JavaScript <abbr title="Read-eval-print loop">REPL</abbr></h1>
+    <noscript><p><strong>JavaScriptが有効な環境でしか動きません。</strong></p></noscript>
+    <p>
+      <textarea id="in" cols="78" rows="20">puts("Hello, world");</textarea>
+      <input id="execute" type="button" value="実行">
+      <input id="clear" type="button" value="クリア">
+    </p>
+    <ol id="out"><li>結果:</li></ol>
+    <h2>手引き</h2>
+    <p>入力欄にJavaScriptのコード片を入力し、実行ボタンを押します。</p>
+    <p><dfn title="コードが実行されるスコープ">実行環境</dfn>で定義されている関数は:</p>
+    <dl>
+      <dt><var>puts</var></dt>
+      <dd><p>正常な結果として文字を表示する。<code>puts("Hello, world")</code>のように使用する。</p></dd>
+      <dt><var>error</var></dt>
+      <dd><p>異常な結果として文字を表示する。<code>error("Error, world")</code>のように使用する。</p></dd>
+      <dt><var>evaluate</var></dt>
+      <dd><p>実行環境でコード片を評価する。<code>evaluate("1 + 2 + 3")</code>のように使用する。</p></dd>
+      <dt><var>clear</var></dt>
+      <dd><p>結果表示を空にする。</p></dd>
+    </dl>
+    <p>です。</p>
+  </body>
+</html>
+
