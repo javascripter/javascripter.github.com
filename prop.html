@@ -1,0 +1,42 @@
+<!doctype html>
+<html>
+  <head>
+    <title></title>
+    <script type="text/javascript">window.onload = function () {
+function A() {
+  this["foo"] = Math.random();
+}
+A.prototype.bar = function () {
+  return this;
+};
+
+function B() {
+  this[Math.random()] = "foo";
+}
+B.prototype.bar = function () {
+  return this;
+};
+
+function time(name, fun) {
+  var d = new Date().getTime(), t;
+  var result = document.getElementById("result");
+  for (var i = 0; i < 10000; ++i) {
+    fun();
+  }
+  t = new Date().getTime() - d;
+  result.textContent += name + ": " + t + "\n";
+}
+
+time("A", function () {
+  new A().bar();
+});
+
+time("B", function () {
+  new B().bar();
+});
+    };</script>
+  </head>
+  <body>
+    <pre id="result"></pre>
+  </body>
+</html>
