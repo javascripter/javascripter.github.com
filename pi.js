@@ -1,7 +1,10 @@
-var result = 1;
-var multiplier = -1;
-for (var i = 3; ; i += 2) {
+var result = 0;
+var add = 1;
+var sub = 3;
+for (;;) {
   postMessage(result * 4);
-  result += multiplier/i;
-  multiplier *= -1;
+  result += 1/add;
+  result -= 1/sub;
+  add += 4;
+  sub += 4;
 }
