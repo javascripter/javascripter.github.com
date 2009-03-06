@@ -1,0 +1,21 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Worker</title>
+    <style>
+    pre {
+      white-space: pre-wrap;
+    }
+    </style>
+    <script>window.onload = function () {
+      var view = document.getElementById("view");
+      var worker = new Worker("pi.js");
+      worker.onmessage = function (ev) {
+        view.textContent = Number(ev.data).toFixed(20);
+      };
+    };</script>
+  </head>
+  <body>
+    <pre id="view"></pre>
+  </body>
+</html>
