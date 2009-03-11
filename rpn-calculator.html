@@ -1,0 +1,63 @@
+<!doctype html>
+<html>
+  <head>
+    <title>RPN Calculator</title>
+    <script>
+function calculateRPN(expression) {
+  var result = 0;
+  var stack = [];
+  var i, c, n, m, x, y;
+  var zero = 48, nine = 54;
+  for (i = 0; i < expression.length; ++i) {
+    c = expression.charAt(i);
+    n = expression.charCodeAt(i);
+    if (n >= zero && n <= nine) {
+      m = 0;
+      do {
+        m = m*10 + n-zero;
+        ++i;
+        c = expression.charAt(i);
+        n = expression.charCodeAt(i);
+      } while (n >= zero && n <= nine);
+      stack.push(m);
+    } else if (c != " ") {
+      x = stack.pop();
+      y = stack.pop();
+      if (c == "+") stack.push(y + x);
+      else if (c == "-") stack.push(y - x);
+      else if (c == "*") stack.push(y * x);
+      else if (c == "/") stack.push(y / x);
+      else throw new Error("Unrecognized character: " + c + " at " + i);
+    }
+  }
+  if (stack.length) {
+    return stack.pop();
+  } else {
+    throw new Error("Stack is empty.");
+  }
+}
+window.onload = function () {
+  var input = document.getElementById("input");
+  var output = document.getElementById("output");
+  input.onkeyup = function () {
+    var value;
+    try {
+      value = calculateRPN(input.value);
+    } catch (ex) {
+      value = "";
+    }
+    output.value = value;
+  };
+};
+    </script>
+  </head>
+  <body>
+    <p>A <abbr title="Reverse Polish Notation">RPN</abbr> Caluculator on JavaScript.</p>
+    <dl>
+      <dt>input:</dt>
+      <dd><input id="input" type="text" value=""></dd>
+      <dt>output:</dt>
+      <dd><input id="output" type="text" value="" readonly="readonly"></dd>
+    </dl>
+  </body>
+</html>
