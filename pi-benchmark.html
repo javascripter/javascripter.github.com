@@ -3,11 +3,11 @@
   <head>
     <title>Benchmark</title>
     <script>
-function Rational(numer ,denom) {
+function Rational(numer, denom) {
   function gcd(a, b) {
     return b ? gcd(b, a % b) : a;
   }
-  var divisor = gcd(numer ,denom);
+  var divisor = gcd(numer, denom);
   this.numer = numer / divisor;
   this.denom = denom / divisor;
 }
