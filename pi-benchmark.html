@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Benchmark</title>
+    <script>
+function Rational(numer ,denom) {
+  function gcd(a, b) {
+    return b ? gcd(b, a % b) : a;
+  }
+  var divisor = gcd(numer ,denom);
+  this.numer = numer / divisor;
+  this.denom = denom / divisor;
+}
+
+Rational.prototype.toString = function () {
+  return this.numer + "/" + this.denom;
+};
+
+Rational.prototype.valueOf = function () {
+  return this.numer / this.denom;
+};
+
+Rational.prototype.add = function (rat) {
+  return new Rational(
+    this.numer * rat.denom + rat.numer * this.denom,
+    this.denom * rat.denom
+  );
+};
+
+Rational.prototype.substract = function (rat) {
+  return new Rational(
+    this.numer * rat.denom - rat.numer * this.denom,
+    this.denom * rat.denom
+  );
+};
+
+Rational.prototype.multiply = function (rat) {
+  return new Rational(this.numer * rat.numer, this.denom * rat.denom);
+};
+
+Rational.prototype.divide = function (rat) {
+  return new Rational(this.numer * rat.denom, this.denom * rat.numer);
+};
+
+Rational.prototype.compareTo = function (rat) {
+  var a = this.numer * rat.denom;
+  var b = rat.numer * this.denom;
+  return a == b ? 0 : a < b ? -1 : 1;
+};
+
+Rational.prototype.equals = function (rat) {
+  return this.compareTo(rat) == 0;
+};
+
+var Benchmark = {
+  initialize: function () {
+    window.addEventListener("load", Benchmark.onload, false);
+  },
+
+  onload: function () {
+    var start = document.getElementById("start");
+    start.addEventListener("click", Benchmark.onclick, false);
+  },
+
+  onclick: function () {
+    var limit = parseInt(document.getElementById("limit").value);
+    var view = document.getElementById("view");
+    if (!isFinite(limit))
+      return;
+    view.textContent += Benchmark.benchmark(limit);
+  },
+  
+  benchmark: function (limit) {
+    var time = new Date().getTime();
+    var i, acc = new Rational(0, 1), result;
+
+    for (i = 1; i < limit; i += 4) {
+      acc = acc.add(new Rational(1, i).substract(new Rational(1, i + 2)));
+    }
+    result = acc.multiply(new Rational(4, 1));
+    return result.valueOf() + ":\n  " + (new Date().getTime() - time) + "\n";
+  }
+};
+
+Benchmark.initialize();
+    </script>
+  </head>
+  <body>
+    <div>
+      <input id="limit" type="text" value="100000"></input>
+      <button id="start">start!</button>
+    </div>
+    <pre id="view"></pre>
+  </body>
+</html>
