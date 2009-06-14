@@ -54,12 +54,12 @@ Rational.prototype.equals = function (rat) {
 
 var Benchmark = {
   initialize: function () {
-    window.addEventListener("load", Benchmark.onload, false);
+    window.onload = Benchmark.onload;
   },
 
   onload: function () {
     var start = document.getElementById("start");
-    start.addEventListener("click", Benchmark.onclick, false);
+    start.onclick = Benchmark.onclick;
   },
 
   onclick: function () {
@@ -87,7 +87,7 @@ Benchmark.initialize();
   </head>
   <body>
     <div>
-      <input id="limit" type="text" value="100000"></input>
+      <input id="limit" type="text" value="100000">
       <button id="start">start!</button>
     </div>
     <pre id="view"></pre>
