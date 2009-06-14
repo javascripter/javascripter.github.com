@@ -67,7 +67,7 @@ var Benchmark = {
     var view = document.getElementById("view");
     if (!isFinite(limit))
       return;
-    view.textContent += Benchmark.benchmark(limit);
+    view.appendChild(document.createTextNode(Benchmark.benchmark(limit)));
   },
   
   benchmark: function (limit) {
