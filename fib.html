@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>fib</title>
+  </head>
+  <body>
+    <ol start="0"></ol>
+  </body>
+</html>
+<script>
+var PHI = (1 + Math.sqrt(5)) / 2;
+var sqrt5 = Math.sqrt(5);
+
+function fib(n) {
+  return Math.floor(Math.pow(PHI, n) / sqrt5 + 1 / 2);
+}
+
+var ol = document.getElementsByTagName("ol").item(0);
+var i;
+for (i = 0; i < 100; i++)
+  ol.appendChild(
+    document.createElement("li")).appendChild(
+      document.createTextNode(fib(i) + "\n"));
+</script>
