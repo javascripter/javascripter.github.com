@@ -15,7 +15,7 @@
         width: 80%;
       }
     --></style>
-    <script type="text/javascript" defer="defer"><!--
+    <script type="text/javascript"><!--
       function prettify(source) {
         var fun;
         try {
@@ -29,16 +29,18 @@
           join('\n').
           replace(/^\s{4}/gm, '');
       }
-      var source = document.getElementsByTagName('textarea').item(0);
-      var button = document.getElementsByTagName('input').item(0);
-      var pre = document.getElementsByTagName('pre').item(0);
-      button.addEventListener(
-        'click',
-        function () {
-          pre.textContent = prettify(source.value) || 'syntax error';
-        },
-        false
-      );
+      document.addEventListener("DOMContentLoaded", function (e) {
+        var source = document.getElementsByTagName('textarea').item(0);
+        var button = document.getElementsByTagName('input').item(0);
+        var pre = document.getElementsByTagName('pre').item(0);
+        button.addEventListener(
+          'click',
+          function () {
+            pre.textContent = prettify(source.value) || 'syntax error';
+          },
+          false
+        );
+      }, false);
     --></script>
   </head>
   <body>
