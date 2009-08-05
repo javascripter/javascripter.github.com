@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Module>
+<ModulePrefs title="現在位置の追跡表示"
+             description="Geolocation技術を使用し現在位置をGoogle Mapsで表示します"
+             author="javascripter"
+             author_email="javascripter_@livedoor.com">
+  <Require feature="sharedmap"/>
+</ModulePrefs>
+<Content type="html"><![CDATA[
+<script>
+function run() {
+  navigator.geolocation.getCurrentPosition(
+    function (p) {
+      maps.setCenter(new GLatLng(p.coords.latitude, p.coords.longitude));
+    },
+    function (error) {
+      if (confirm("Retry?"))
+        run();
+    });
+  wid = navigator.geolocation.watchPosition(
+    function (p) {
+      maps.panTo(new GLatLng(p.coords.latitude, p.coords.longitude));
+    },
+    function (error) {
+      if (confirm("Retry?"))
+        run();
+      else
+        navigator.geolocation.clearPosition(wid);
+    });
+}
+
+var maps = new GMap2();
+var wid;
+
+if ("geolocation" in navigator)
+  run();
+else
+  alert("Your browser doesn't support Geolocation API.");</script>
+
+]]></Content>
+</Module>
+
