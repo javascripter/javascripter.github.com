@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Geolocation with Google Maps</title>
+    <script>
+if ("geolocation" in navigator) {
+  navigator.geolocation.getCurrentPosition(function (p) {
+    console.log(p);
+    window.open("http://maps.google.co.jp/?q=(" + p.coords.latitude + "," + p.coords.longitude + ")");
+  });
+} else {
+  alert("Your browser doesn't support Geolocation API.");
+}
+    </script>
+  </head>
+  <body>
+  </body>
+</html>
