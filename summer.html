@@ -1,0 +1,36 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>夏休みカウント</title>
+    <style>
+      #view {
+        font-size: 5em;
+      }
+    </style>
+  </head>
+  <body>
+    <p id="view"></p>
+  </body>
+</html>
+<script>
+var view = document.getElementById("view");
+var end = new Date(
+  location.hash ?
+    location.hash.substr(1) :
+    "Thu Oct 01 2009 00:00:00 GMT+0900 (JST)"
+);
+var tid = setInterval(function () {
+  var now = new Date();
+  var text;
+  if (now.valueOf() > end.valueOf()) {
+    text = "夏休みは終了しました。来年にご期待下さい。";
+    clearInterval(tid);
+  } else {
+    text = "夏休み、残り";
+    text += Math.floor((end.valueOf() - now.valueOf()) / 1000) + "秒";
+  }
+  view.textContent = text;
+}, 1000);
+</script>
+
