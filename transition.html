@@ -15,9 +15,12 @@ body {
     </style>
 <script>
 setInterval(function () {
-  var color = Math.random().toString(16).substring(2,8);
-  document.body.style.color = "#" + color;
-  document.body.style.backgroundColor = "#" + Math.abs(0xffffff - parseInt(color, 16)).toString(16);
+  function toRGB(color) {
+    return "#" + ("00000" + color.toString(16)).substr(-6);
+  }
+  var color = Math.floor(Math.random()*0x1000000);
+  document.body.style.color = toRGB(color);
+  document.body.style.backgroundColor = toRGB(Math.abs(0xffffff - color));
 }, 5000);
 </script>
   </head>
