@@ -1,0 +1,20 @@
+<!doctype html>
+<html>
+  <head>
+    <title>color</title>
+    <style>
+p {
+  font-size: 10em;
+}
+    </style>
+    <script>
+setInterval(function () {
+  document.body.style.color = "#" + Math.floor(Math.random()*0xffffff).toString(16);
+  document.body.style.backgroundColor = "#" + Math.floor(Math.random()*0xffffff).toString(16);
+}, 0);
+    </script>
+  </head>
+  <body>
+    <p>hello</p>
+  </body>
+</html>
