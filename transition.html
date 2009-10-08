@@ -1,0 +1,27 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+    <style>
+body {
+  -moz-transition: 5s all linear 0s;
+  -webkit-transition: 5s all linear 0s;
+  transition: 5s all linear 0s;
+  text-align: center;
+  text-shadow: 1px 1px 1px white;
+  font-size: 10em;
+}
+    </style>
+<script>
+setInterval(function () {
+  var color = Math.random().toString(16).substr(-6);
+  document.body.style.color = "#" + color;
+  document.body.style.backgroundColor = "#" + Math.abs(0xffffff - parseInt(color, 16)).toString(16);
+}, 5000);
+</script>
+  </head>
+  <body>
+    <p>π≈3.1416</p>
+  </body>
+</html>
