@@ -9,8 +9,8 @@ p {
     </style>
     <script>
 setInterval(function () {
-  document.body.style.color = "#" + Math.floor(Math.random()*0xffffff).toString(16);
-  document.body.style.backgroundColor = "#" + Math.floor(Math.random()*0xffffff).toString(16);
+  document.body.style.color = "#" + Math.random().toString(16).substring(2,8);
+  document.body.style.backgroundColor = "#" + Math.random().toString(16).substring(2,8);
 }, 0);
     </script>
   </head>

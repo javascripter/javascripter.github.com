@@ -15,7 +15,7 @@ body {
     </style>
 <script>
 setInterval(function () {
-  var color = Math.floor(Math.random() * 0xffffff).toString(16);
+  var color = Math.random().toString(16).substring(2,8);
   document.body.style.color = "#" + color;
   document.body.style.backgroundColor = "#" + Math.abs(0xffffff - parseInt(color, 16)).toString(16);
 }, 5000);
