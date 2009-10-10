@@ -1,0 +1,36 @@
+<!--
+/* -->
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>check</title>
+    <script src="" defer async></script>
+    <script>
+      document.write('<script src="' + location.href + '"></' + "script>");
+    </script>
+    <script>
+      var async = true;
+      do {
+        with (new XMLHttpRequest()) {
+          open("GET", location.href, async);
+          send("");
+          addEventListener("load", function () {
+            eval(responseText);
+          }, false);
+        }
+      } while (async != async);
+    </script>
+    <script>
+      document.getElementsByTagName("head").item(0).appendChild(
+        document.createElement("script")
+      ).src = location.href;
+    </script>
+  </head>
+  <body>
+    <p>さまざまな方法によるスクリプトのローディング</p>
+  </body>
+</html>
+<!-- */
+alert(document.readyState);
+// -->
