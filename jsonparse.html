@@ -1,0 +1,21 @@
+<meta charset="UTF-8">
+<script>
+
+var s = JSON.stringify(Array.apply(null, new Array(10000)).map(function (v) { return new Date(); }));
+
+if (!confirm("console見てね")) throw 1;
+
+console.time("eval");
+
+eval("(" + s + ")");
+
+console.timeEnd("eval");
+
+
+console.time("JSON.parse");
+
+JSON.parse(s);
+
+console.timeEnd("JSON.parse");
+
+</script>
