@@ -5,25 +5,13 @@
     <title>make10table</title>
     <script>
 var make10table = function () {
-  var exec = function (a, op, b) {
-    switch (op) {
-    case 0:
-      return a / b;
-    case 1:
-      return a + b;
-    case 2:
-      return a - b;
-    case 3:
-      return a * b;
-    }
-  };
-  
   var table = {__proto__: null};
   var a, b, c, d, e, f, g;
   var op = "/+-*";
   var expr;
   var name;
   var origin;
+  var r;
 
   for (a = 0; a < 10; ++a) {
     for (b = a; b < 10; ++b) {
@@ -34,11 +22,30 @@ var make10table = function () {
           for (e = origin; e < 4; ++e) {
             for (f = origin; f < 4; ++f) {
               for (g = origin; g < 4; ++g) {
-                expr = "" + a + op[e] + b + op[f] + c + op[g] + d;
-                if (exec(exec(exec(a, e, b), f, c), g, d) === 10) {
+                r = a;
+                switch (e) {
+                case 0: r /= b; break;
+                case 1: r += b; break;
+                case 2: r -= b; break;
+                case 3: r *= b; break;
+                }
+                switch (f) {
+                case 0: r /= c; break;
+                case 1: r += c; break;
+                case 2: r -= c; break;
+                case 3: r *= c; break;
+                }
+                switch (g) {
+                case 0: r /= d; break;
+                case 1: r += d; break;
+                case 2: r -= d; break;
+                case 3: r *= d; break;
+                }
+                if (r === 10) {
                   if (!(name in table)) {
                     table[name] = [];
                   }
+                  expr = "" + a + op[e] + b + op[f] + c + op[g] + d;
                   table[name].push(expr);
                 }
               }
