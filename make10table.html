@@ -5,24 +5,37 @@
     <title>make10table</title>
     <script>
 var make10table = function () {
-  var table = {};
+  var exec = function (a, op, b) {
+    switch (op) {
+    case 0:
+      return a / b;
+    case 1:
+      return a + b;
+    case 2:
+      return a - b;
+    case 3:
+      return a * b;
+    }
+  };
+  
+  var table = Object.create(null);
   var a, b, c, d, e, f, g;
-  var op = ["+", "-", "*", "/"];
+  var op = "/+-*";
   var expr;
   var name;
-  var value;
-  
-  for (a = 0; a <= 9; a++) {
-    for (b = a; b <= 9; b++) {
-      for (c = b; c <= 9; c++) {
-        for (d = c; d <= 9; d++) {
-          for (e = 0; e < 4; e++) {
-            for (f = 0; f < 4; f++) {
-              for (g = 0; g < 4; g++) {
-                expr = a + op[e] + b + op[f] + c + op[g] + d;
-                name = [a,b,c,d].join("");
-                value = eval(expr);
-                if (value == 10) {
+  var origin;
+
+  for (a = 0; a < 10; ++a) {
+    for (b = a; b < 10; ++b) {
+      origin = 0 + (b !== 0);
+      for (c = b; c < 10; ++c) {
+        for (d = c; d < 10; ++d) {
+          name = "" + a + b + c + d;
+          for (e = origin; e < 4; ++e) {
+            for (f = origin; f < 4; ++f) {
+              for (g = origin; g < 4; ++g) {
+                expr = "" + a + op[e] + b + op[f] + c + op[g] + d;
+                if (exec(exec(exec(a, e, b), f, c), g, d) === 10) {
                   if (!(name in table)) {
                     table[name] = [];
                   }
