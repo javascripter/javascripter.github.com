@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+ <head>
+ <meta charset="UTF-8">
+ <title>X'mas</title>
+ <style>
+h1 {
+  text-shadow: #bbbb00 0px 0px 3px;
+  font-size: 2em;
+  text-align: center;
+}
+body {
+  font-family: sans-serif;
+  color: white;
+  background: black;
+  background: -webkit-canvas(snows);
+}
+  </style>
+  <script>
+var rand = function(n) {
+  return Math.floor(Math.random() * n);
+};
+
+function draw(w, h) {
+  var generate = function(w, h) {
+    return {
+      top: rand(h),
+      left: rand(w),
+      size: 1 + Math.random()
+    };
+  };
+  var snows = new Array(Math.floor(w * h / 3500));
+  var context = document.getCSSCanvasContext("2d", "snows", w, h);
+  var i;
+  for (i = 0; i < snows.length; i++) {
+    snows[i] = generate(w, h);
+  }
+  var wind = 0;
+  setInterval(function() {
+    wind = rand(2) - 1;
+  }, 2000);
+  var grad = context.createLinearGradient(w / 2, 0, w / 2, h);
+  grad.addColorStop(0, "#000000");
+  grad.addColorStop(0.6, "#150f10");
+  setInterval(function() {
+    var snow;
+    context.fillStyle = grad;
+    context.fillRect(0, 0, w, h);
+    context.fillStyle = "#ffffff";
+    for (i = 0; i < snows.length; i++) {
+      snow = snows[i];
+      context.fillRect(snow.left, snow.top, snow.size, snow.size);
+      snow.top += 3;
+      snow.left += rand(2) - 1 - wind;
+      snows[i] = snow.top > h ? generate(w, 50) : snow;
+    }
+  }, 50);
+}
+
+window.addEventListener("DOMContentLoaded", function () {
+  if (document.getCSSCanvasContext) {
+    draw(window.innerWidth, window.innerHeight);
+  }
+}, false)
+  </script>
+ </head>
+ <body>
+   <h1>クリスマスが、今年もやってくる。</h1>
+ </body>
+</html>
