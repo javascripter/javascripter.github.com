@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>JavaScriptによる自動生成迷路</title>
+    <script id="src">
+window.onload = function () {
+  function rand(n) {
+    return Math.floor(Math.random() * n);
+  }
+  
+  const width = 33, height = 33;
+  var wall = (1 << (width - 2)) - 1 << 1;
+  var table = [1 << (width - 2)];
+  var stripe = 0;
+  var i, j;
+  for (i = 1; i < width; i += 2) {
+    stripe |= 1 << i;
+  }
+  for (i = 1; i < height - 1; i++) {
+    table[i] = i & 1 ? wall : stripe;
+  }
+  table[height - 1] = 2;
+  
+  const top = 0, right = 1, bottom = 2, left = 3;
+  
+  for (i = 2; i < height - 2; i += 2) {
+    for (j = 2; j < width - 2; j += 2) {
+      var choices = [];
+      if (table[i - 1] & 1 << j) {
+        choices.push(top);
+      }
+      if (table[i] & 1 << j >> 1) {
+        choices.push(right);
+      }
+      if (table[i + 1] & 1 << j) {
+        choices.push(bottom);
+      }
+      if (j == width - 3) {
+        choices.push(left);
+      }
+      switch (choices[rand(choices.length)]) {
+      case top:
+        table[i - 1] ^= 1 << j;
+        break;
+      case right:
+        table[i] ^= 1 << j >> 1;
+        break;
+      case bottom:
+        table[i + 1] ^= 1 << j;
+        break;
+      case left:
+        table[i] ^= 1 << j << 1;
+        break;
+      }
+    }
+  }
+  
+  const scale = 10;
+  var canvas = document.getElementById("canvas");
+  canvas.width = width * scale;
+  canvas.height = height * scale;
+  var context = canvas.getContext("2d");
+  
+  for (i = 0; i < height; i++) {
+    for (j = 0; j < width; j++) {
+      if (~table[i] & (1 << j)) {
+        context.fillRect((width - j - 1) * scale, i * scale, scale, scale);
+      }
+    }
+  }
+  document.getElementById("view").appendChild(
+    document.createTextNode(document.getElementById("src").textContent)
+  );
+};
+    </script>
+  </head>
+  <body>
+    <h1>JavaScriptによる自動生成迷路</h1>
+    <canvas id="canvas"></canvas>
+    <pre id="view"></pre>
+  </body>
+</html>
