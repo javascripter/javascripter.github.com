@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>canvas this</title>
+    <script>
+function Tetris(options) {
+    this.width = options.width;
+    this.height = options.height;
+    this.speed = options.speed;
+    this.canvas = options.canvas;
+    this.colors = options.colors || this.colors;
+    this.blocks = options.blocks || this.blocks;
+    this.table = [];
+    this.block = null;
+    this.nextBlock = null;
+    this.x = 0;
+    this.y = 0;
+    this.id = 0;
+    this.rotate = 0;
+    this.beginTime = 0;
+}
+
+Tetris.prototype = {
+    colors: ["white", "lightgray", "red", "yellow", "pink", "lightgreen", "blue", "orange", "lightblue"],
+    initTable: function () {
+        var x, y;
+        for (y = 0; y < this.height; y++) {
+            this.table[y] = [];
+            for (x = 0; x < this.width; x++) {
+                this.table[y][x] = 0;
+            }
+        }
+        for (y = 0; y < this.height; y++) {
+            this.table[y][0] = 1;
+            this.table[y][this.width - 1] = 1;
+        }
+        for (x = 0; x < this.width; x++) {
+            this.table[0][x] = 1;
+            this.table[this.height - 1][x] = 1;
+        }
+    },
+    blocks: [
+        [
+            [
+                [2, 2, 2, 2],
+                [0, 0, 0, 0],
+                [0, 0, 0, 0],
+                [0, 0, 0, 0]
+            ],
+            [
+                [0, 0, 0, 2],
+                [0, 0, 0, 2],
+                [0, 0, 0, 2],
+                [0, 0, 0, 2]
+            ],
+            [
+                [0, 0, 0, 0],
+                [0, 0, 0, 0],
+                [2, 2, 2, 2],
+                [0, 0, 0, 0]
+            ],
+            [
+                [2, 0, 0, 0],
+                [2, 0, 0, 0],
+                [2, 0, 0, 0],
+                [2, 0, 0, 0]
+            ], ],
+
+        [
+            [
+                [3, 3],
+                [3, 3]
+            ]
+        ],
+
+        [
+            [
+                [0, 4, 4],
+                [4, 4, 0],
+                [0, 0, 0]
+            ],
+            [
+                [0, 4, 0],
+                [0, 4, 4],
+                [0, 0, 4]
+            ],
+            [
+                [0, 0, 0],
+                [0, 4, 4],
+                [4, 4, 0]
+            ],
+            [
+                [4, 0, 0],
+                [4, 4, 0],
+                [0, 4, 0]
+            ]
+        ],
+
+
+        [
+            [
+                [5, 5, 0],
+                [0, 5, 5],
+                [0, 0, 0]
+            ],
+            [
+                [0, 0, 5],
+                [0, 5, 5],
+                [0, 5, 0]
+            ],
+            [
+                [0, 0, 0],
+                [5, 5, 0],
+                [0, 5, 5]
+            ],
+            [
+                [0, 5, 0],
+                [5, 5, 0],
+                [5, 0, 0]
+            ]
+        ],
+
+
+        [
+            [
+                [6, 0, 0],
+                [6, 6, 6],
+                [0, 0, 0]
+            ],
+            [
+                [0, 6, 6],
+                [0, 6, 0],
+                [0, 6, 0]
+            ],
+            [
+                [0, 0, 0],
+                [6, 6, 6],
+                [0, 0, 6]
+            ],
+            [
+                [0, 6, 0],
+                [0, 6, 0],
+                [6, 6, 0]
+            ]
+        ],
+
+
+        [
+            [
+                [0, 0, 7],
+                [7, 7, 7],
+                [0, 0, 0]
+            ],
+            [
+                [0, 7, 0],
+                [0, 7, 0],
+                [0, 7, 7]
+            ],
+            [
+                [0, 0, 0],
+                [7, 7, 7],
+                [7, 0, 0]
+            ],
+            [
+                [7, 7, 0],
+                [0, 7, 0],
+                [0, 7, 0]
+            ]
+        ],
+
+
+        [
+            [
+                [0, 8, 0],
+                [8, 8, 8],
+                [0, 0, 0]
+            ],
+            [
+                [0, 8, 0],
+                [0, 8, 8],
+                [0, 8, 0]
+            ],
+            [
+                [0, 0, 0],
+                [8, 8, 8],
+                [0, 8, 0]
+            ],
+            [
+                [0, 8, 0],
+                [8, 8, 0],
+                [0, 8, 0]
+            ]
+        ]
+    ],
+
+    createNewBlock: function () {
+        var block = this.blocks[Math.floor(Math.random() * this.blocks.length)];
+        block = block.concat();
+        return block;
+    },
+    setNewBlock: function () {
+        var block = this.nextBlock;
+        var x = Math.floor((this.width - block[0].length) / 2),
+            y = 1;
+        var rotate = 0;
+        if (this.canPutIn(block[rotate], x, y)) {
+            this.nextBlock = this.createNewBlock();
+            this.block = block;
+            this.x = x
+            this.y = y;
+            this.rotate = rotate;
+            this.updateView();
+        } else {
+            this.gameOver();
+        }
+    },
+    initTimer: function () {
+        var self = this;
+        this.id = setInterval(function () {
+            if (!self.isFixed()) {
+                self.moveBlockBy(0, 1);
+            }
+            if (self.isFixed()) {
+                self.enter();
+                self.setNewBlock();
+            }
+        },
+        this.speed);
+    },
+    clearTimer: function () {
+        clearInterval(this.id);
+    },
+    canPutIn: function (block, x, y) {
+        var ax, ay;
+        for (ay = 0; ay < block.length; ay++) {
+            for (ax = 0; ax < block[ay].length; ax++) {
+                if (block[ay][ax] != 0 && this.table[ay + y][ax + x] != 0) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    },
+    enter: function () {
+        var table = this.table;
+        var block = this.block[this.rotate];
+        var x, y;
+        for (y = 0; y < block.length; y++) {
+            for (x = 0; x < block[y].length; x++) {
+                if (block[y][x] != 0) {
+                    table[this.y + y][this.x + x] = block[y][x];
+                }
+            }
+        }
+        this.removeCompleted();
+    },
+    isFixed: function () {
+        var block = this.block[this.rotate];
+        var table = this.table;
+        var x, y;
+        for (y = 0; y < block.length; y++) {
+            for (x = 0; x < block[y].length; x++) {
+                if (block[y][x] != 0 && table[y + this.y + 1][x + this.x] != 0) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    },
+    removeCompleted: function () {
+        var x, y;
+        var empty_line = [1];
+        for (x = 1; x < this.width - 1; x++) {
+            empty_line[x] = 0;
+        }
+        empty_line[this.width - 1] = 1;
+        for (y = 1; y < this.height - 1; y++) {
+            if (this.table[y].indexOf(0) == -1) {
+                this.table.splice(y, 1);
+                this.table.splice(1, 0, empty_line.concat());
+            }
+        }
+
+    },
+    moveBlockBy: function (x, y) {
+        if (this.canPutIn(this.block[this.rotate], this.x + x, this.y + y)) {
+            this.x += x;
+            this.y += y;
+            this.updateView();
+        }
+    },
+    hardDrop: function () {
+        while (this.canPutIn(this.block[this.rotate], this.x, this.y + 1)) {
+            this.moveBlockBy(0, 1);
+        }
+    },
+    leftRotateBlock: function () {
+        var block = this.block[this.rotate];
+        var rotate = (this.rotate == 0 ? this.block.length : this.rotate) - 1;
+        if (this.canPutIn(this.block[rotate], this.x, this.y)) {
+            this.rotate = rotate;
+            this.updateView();
+        }
+    },
+    rightRotateBlock: function () {
+        var block = this.block[this.rotate];
+        var rotate = (this.rotate + 1) % this.block.length;
+        if (this.canPutIn(this.block[rotate], this.x, this.y)) {
+            this.rotate = rotate;
+            this.updateView();
+        }
+    },
+    updateView: function () {
+        var canvas = this.canvas;
+        var context = canvas.getContext("2d");
+        var block = this.block[this.rotate];
+        var w_scale = canvas.width / this.width;
+        var h_scale = canvas.height / this.height;
+        var x, y;
+        context.clearRect(0, 0, canvas.width, canvas.height);
+        for (y = 0; y < this.height; y++) {
+            for (x = 0; x < this.width; x++) {
+                context.fillStyle = this.colors[this.table[y][x]];
+                context.fillRect(x * w_scale, y * h_scale, w_scale, h_scale);
+            }
+        }
+        for (y = 0; y < block.length; y++) {
+            for (x = 0; x < block[y].length; x++) {
+                if (block[y][x] != 0) {
+                    context.fillStyle = this.colors[block[y][x]];
+                    context.fillRect((x + this.x) * w_scale, (y + this.y) * h_scale, w_scale, h_scale);
+                }
+            }
+        }
+        block = this.nextBlock[0];
+        for (y = 0; y < block.length; y++) {
+          for (x = 0; x < block[y].length; x++) {
+            if (block[y][x] != 0) {
+              context.fillStyle = this.colors[block[y][x]];
+              break;
+            }
+          }
+        }
+        context.fillRect(0, 0, w_scale, h_scale);
+    },
+    gameOver: function () {
+        this.clearTimer();
+        this.clearHandle()
+        var canvas = this.canvas;
+        var context = canvas.getContext("2d");
+        context.fillStyle = "rgba(255,0,0, 0.3)";
+        context.fillRect(0, 0, canvas.width, canvas.height);;
+    },
+    handleEvent: function (event) {
+        var ignore_default = true;
+        switch (true) {
+        case event.keyCode == 37:
+            // left
+            this.moveBlockBy(-1, 0);
+            break;
+        case event.keyCode == 38:
+            // up
+            this.hardDrop();
+            break;
+        case event.keyCode == 39:
+            // right
+            this.moveBlockBy(1, 0);
+            break;
+        case event.keyCode == 40:
+            // bottom
+            this.moveBlockBy(0, 1);
+            break;
+        case String.fromCharCode(event.which).toLowerCase() == "x":
+            // x 
+            this.leftRotateBlock();
+            break;
+        case String.fromCharCode(event.which).toLowerCase() == "z":
+            // z
+            this.rightRotateBlock();
+            break;
+        default:
+            ignore_default = false;
+            break;
+
+        }
+        if (ignore_default) {
+            event.preventDefault();
+        }
+    },
+    handle: function () {
+        var type = navigator.userAgent.indexOf("WebKit") >= 0 ? "keydown" : "keypress";
+        document.addEventListener(type, this, false);
+    },
+    clearHandle: function () {
+        var type = navigator.userAgent.indexOf("WebKit") >= 0 ? "keydown" : "keypress";
+        document.removeEventListener(type, this, false);
+    },
+    run: function () {
+        this.initTable();
+        this.nextBlock = this.createNewBlock();
+        this.beginTime = Date.now();
+        this.setNewBlock();
+        this.initTimer();
+        this.handle();
+        this.updateView();
+    }
+};
+
+document.addEventListener("DOMContentLoaded", function () {
+    var opts = [{
+        width: 12,
+        height: 22,
+        speed: 1000,
+        canvas: document.getElementById("view")
+    },
+    {
+        width: 12,
+        height: 22,
+        speed: 10,
+        blocks: [
+            [
+                [[1]]
+            ]
+        ],
+        canvas: document.getElementById("view")
+    }];
+    var i = 0;
+    var start = document.getElementById("start");
+    var checkbox = document.getElementById("checkbox");
+    var tetris = null;
+    start.addEventListener("click", function (e) {
+        if (tetris) {
+            tetris.gameOver();
+        }
+        tetris = new Tetris(opts[checkbox.checked - 0]);
+        tetris.run();
+    },
+    false);
+},
+false);
+
+    </script>
+  </head>
+  <body>
+    <canvas id="view" width="120" height="220"></canvas>
+    <p><input id="start" type="button" value="start/restart"><input type="checkbox" id="checkbox">飽きた</p>
+    <dl>
+    <dt>↑</dt>
+    <dd>ハードドロップ（一気に下に）</dd>
+    <dt>←↓→</dt>
+    <dd>ブロックを動かす</dd>
+    <dt>x,z</dt>
+    <dd>回転</dd>
+    </dl>
+  </body>
+</html>
