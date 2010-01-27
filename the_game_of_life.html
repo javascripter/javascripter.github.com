@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>The Game Of Life</title>
+    <link rel="icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAEklEQVQ4jWNgGAWjYBSMAggAAAQQAAF/TXiOAAAAAElFTkSuQmCC">
+    <style>
+#canvas {
+  display: none;
+}
+    </style>
+    <script>
+var width = 16;
+var height = 16;
+width++;
+height++;
+
+var TheGameOfLife = function (options) {
+  this.width = options.width + 1;
+  this.height = options.height + 1;
+  this.firstLives = options.firstLives;
+  this.cells = this.clearCells([]);
+  this.afterUpdates = [];
+  this.randomize();
+};
+
+TheGameOfLife.prototype = {
+  clearCells: function (cells) {
+    var i, j;
+    for (i = 0; i <= width; i++) {
+      cells[i] = [];
+      for (j = 0; j <= height; j++) {
+        cells[i][j] = 0;
+      }
+    }
+    return cells;
+  },
+  update: function () {
+    var i, j, n;
+    var newCells = this.clearCells([]);
+    for (i = 1; i < width; i++) {
+      for (j = 1; j < height; j++) {
+        n = 0;
+        n += this.cells[i - 1][j - 1];
+        n += this.cells[i - 1][j];
+        n += this.cells[i - 1][j + 1];
+        n += this.cells[i][j - 1];
+        n += this.cells[i][j + 1];
+        n += this.cells[i + 1][j - 1];
+        n += this.cells[i + 1][j];
+        n += this.cells[i + 1][j + 1];
+        if (this.cells[i][j] == 0 ? n == 3 : (n == 2 || n == 3)) {
+          newCells[i][j] = 1;
+          } else {
+          newCells[i][j] = 0;
+        }
+      }
+    }
+    this.cells = newCells;
+    for (i = 0; i < this.afterUpdates.length; i++) {
+      this.afterUpdates[i]();
+    }
+  },
+  afterUpdate: function (hook) {
+    this.afterUpdates.push(hook);
+  },
+  randomize: function () {
+    var remains = this.firstLives;
+    var i, j;
+    while (remains--) {
+      i = Math.floor(Math.random() * (this.width - 1) * (this.height - 1));
+      j = i % (this.height - 1);
+      i = (i - j) / (this.height - 1);
+      i++;
+      j++;
+      this.cells[i][j] = 1;
+    }
+  }
+};
+
+document.addEventListener("DOMContentLoaded", function () {
+  function reproduce() {
+    var url = canvas.toDataURL();
+    favicon.href = url;
+    favicon.parentNode.appendChild(favicon);
+  }
+
+  function render () {
+    var wScale = canvas.width / (tgol.width - 1);
+    var hScale = canvas.height / (tgol.height - 1);
+    context.clearRect(0, 0, canvas.width, canvas.height);
+    var i, j;
+    for (i = 1; i < tgol.width; i++) {
+      for (j = 1; j < tgol.height; j++) {
+        if (tgol.cells[i][j] & 1) {
+          context.fillRect(i * wScale, j * hScale, wScale, hScale);
+        }
+      }
+    }
+  }
+
+  var favicon = document.querySelector('link[rel="icon"]');
+  var canvas = document.getElementById("canvas");
+  var context = canvas.getContext("2d");
+  var options = {
+    width: 16,
+    height: 16,
+    firstLives: 50,
+    canvas: canvas
+  };
+  var tgol = new TheGameOfLife(options);
+  tgol.afterUpdate(function () {
+    render();
+    reproduce();
+  });
+  render();
+  setInterval(function () {
+    tgol.update();
+  }, 100);
+  document.addEventListener("click", function () {
+    tgol.clearCells(tgol.cells);
+    tgol.randomize();
+  }, false);
+}, false);
+      </script>
+    </head>
+  <body>
+    <canvas id="canvas" width="16" height="16"></canvas>
+  </body>
+</html>
+
