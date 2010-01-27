@@ -9,11 +9,6 @@
 }
     </style>
     <script>
-var width = 16;
-var height = 16;
-width++;
-height++;
-
 var TheGameOfLife = function (options) {
   this.width = options.width + 1;
   this.height = options.height + 1;
@@ -26,9 +21,9 @@ var TheGameOfLife = function (options) {
 TheGameOfLife.prototype = {
   clearCells: function (cells) {
     var i, j;
-    for (i = 0; i <= width; i++) {
+    for (i = 0; i <= this.width; i++) {
       cells[i] = [];
-      for (j = 0; j <= height; j++) {
+      for (j = 0; j <= this.height; j++) {
         cells[i][j] = 0;
       }
     }
@@ -37,8 +32,8 @@ TheGameOfLife.prototype = {
   update: function () {
     var i, j, n;
     var newCells = this.clearCells([]);
-    for (i = 1; i < width; i++) {
-      for (j = 1; j < height; j++) {
+    for (i = 1; i < this.width; i++) {
+      for (j = 1; j < this.height; j++) {
         n = 0;
         n += this.cells[i - 1][j - 1];
         n += this.cells[i - 1][j];
@@ -78,6 +73,8 @@ TheGameOfLife.prototype = {
 };
 
 document.addEventListener("DOMContentLoaded", function () {
+  var width = 16;
+  var height = 16;
   function reproduce() {
     var url = canvas.toDataURL();
     favicon.href = url;
@@ -85,8 +82,8 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   function render () {
-    var wScale = canvas.width / (tgol.width - 1);
-    var hScale = canvas.height / (tgol.height - 1);
+    var wScale = canvas.width / width;
+    var hScale = canvas.height / height;
     context.clearRect(0, 0, canvas.width, canvas.height);
     var i, j;
     for (i = 1; i < tgol.width; i++) {
@@ -102,8 +99,8 @@ document.addEventListener("DOMContentLoaded", function () {
   var canvas = document.getElementById("canvas");
   var context = canvas.getContext("2d");
   var options = {
-    width: 16,
-    height: 16,
+    width: width,
+    height: height,
     firstLives: 50,
     canvas: canvas
   };
