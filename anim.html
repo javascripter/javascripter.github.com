@@ -1,0 +1,36 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>-</title>
+    <style>
+      pre {
+        position:absolute;
+        top:50%;
+        left:50%;
+      }
+    </style>
+    <script>
+window.onload = function () {
+  var pre = document.getElementsByTagName("pre").item(0);
+  var buffer = "|/-\\";
+  var i = 0;
+  var n = 100;
+  setTimeout(function f() {
+    i++;
+    pre.textContent = buffer.charAt(i%buffer.length);
+    if(Math.random()<(n/2000)){
+      buffer = buffer.split("").reverse().join("");
+      n = Math.floor(Math.random()*100)+50;
+    }
+    setTimeout(f, n);
+  }, n);
+};
+    </script>
+  </head>
+  <body>
+    <pre>
+    </pre>
+  </body>
+</html>
+
