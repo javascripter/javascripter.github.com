@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>HTML5 pushState/replaceState demo</title>
+    <style>
+canvas, img {
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+canvas {
+  z-index: 1;
+  pointer-events: none;
+}
+img {
+  z-index: 0;
+}
+    </style>
+    <script>
+const WIDTH = window.screen.width, HEIGHT = window.screen.height;
+var canvas = document.createElement("canvas");
+canvas.width = WIDTH;
+canvas.height = HEIGHT;
+var graphics = canvas.getContext("2d");
+var state;
+
+var image = document.createElement("img");
+image.width = WIDTH;
+image.height = HEIGHT;
+
+var rcolor = /(?:^\?|&)color=([^&]+)/;
+var match = location.search.match(rcolor);
+
+if (match) {
+  try {
+    state = JSON.parse(decodeURIComponent(atob(match[1])));
+    if (!(typeof state.x1 === "number" &&
+          typeof state.y1 === "number" &&
+          typeof state.x2 === "number" &&
+          typeof state.y2 === "number" &&
+          state.offsets.length === state.colors.length &&
+          state.offsets.every(function (offset) {
+            return typeof offset === "number" && offset >= 0;
+          }) &&
+          state.colors.every(function (color) {
+            return typeof color === "number" && color >= 0 && color <= 0xffffff;
+          }))) {
+      throw TypeError("Invalid JSON");
+    };
+  } catch (error) {
+    state = makeState();
+  }
+} else {
+  state = makeState();
+}
+
+modifyState(state, true);
+
+image.addEventListener("click", function () {
+  modifyState(makeState(), false);
+}, false);
+
+document.addEventListener("DOMContentLoaded", function (event) {
+  document.body.appendChild(canvas);
+  document.body.appendChild(image);
+}, false);
+
+window.addEventListener("popstate", function (event) {
+  var state = JSON.parse(event.state);
+  draw(graphics, state, image);
+}, false);
+
+function random_color() {
+  return Math.floor(Math.random() * 0x1000000);
+}
+
+function modifyState(state, replace) {
+  var serializedState = JSON.stringify(state);
+  var newURL = location.protocol + "//" + location.host + location.pathname + "?" + btoa(serializedState) + location.hash;
+  if (replace) {
+    history.replaceState(serializedState, "", newURL);
+  } else {
+    history.pushState(serializedState, "", newURL);
+  }
+  draw(graphics, state, image);
+}
+
+function makeState() {
+  var x1, y1, x2, y2;
+  x1 = (Math.random() * WIDTH);
+  y1 = (Math.random() * HEIGHT);
+  x2 = (x1 + (Math.random() * WIDTH)) % WIDTH;
+  y2 = (y1 + (Math.random() * HEIGHT)) % HEIGHT;
+  var i;
+
+  var nstops = Math.floor(Math.random() * 2) + 2;
+
+  var offsets = [0];
+  var offset = 0;
+  var colors = [];
+
+  for (i = 1; i < nstops - 1; i++) {
+    offset += 1 / (nstops - 1);
+    offsets.push(offset);
+  }
+  offsets.push(1);
+
+  for (i = 0; i < nstops; i++) {
+    colors.push(random_color());
+  }
+
+  return {
+    x1: x1,
+    y1: y1,
+    x2: x2,
+    y2: y2,
+    offsets: offsets,
+    colors: colors
+  };
+
+}
+
+function toRGB(color) {
+  return "#" + ("00000" + color.toString(16)).slice(-6);
+}
+
+var timer;
+
+function draw(graphics, state, copyTo) {
+  var grad = graphics.createLinearGradient(state.x1, state.y1, state.x2, state.y2);
+  var nstops = state.offsets.length;
+  for (i = 0; i < nstops; i++) {
+    grad.addColorStop(state.offsets[i], toRGB(state.colors[i]));
+  }
+  graphics.fillStyle = grad;
+  graphics.fillRect(0, 0, WIDTH, HEIGHT);
+  if (copyTo) {
+    if (timer) {
+      clearTimeout(timer);
+      timer = 0;
+    }
+    timer = setTimeout(function () {
+       copyTo.src = graphics.canvas.toDataURL();
+    }, 500);
+  }
+}
+
+    </script>
+  </head>
+  <body>
+  </body>
+</html>
